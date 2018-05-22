@@ -21,6 +21,8 @@ func main() {
 		name      string
 		link      string
 		likecount int64
+		website   string
+		address   string
 	}
 
 	var center = "37.176487,-3.597929"
@@ -31,7 +33,7 @@ func main() {
 		"center":       center,
 		"distance":     "10000",
 		"limit":        "100",
-		"fields":       "name,engagement,overall_star_rating,link",
+		"fields":       "name,engagement, link, website, single_line_address",
 	})
 
 	var items []fb.Result
@@ -50,8 +52,15 @@ func main() {
 		id, _ := strconv.Atoi(item["id"].(string))
 		name := item["name"].(string)
 		link := item["link"].(string)
+		website := ""
+		if item["website"] != nil {
+			website = item["website"].(string)
+		}
+		address := ""
+		if item["single_line_address"] != nil {
+			address = item["single_line_address"].(string)
+		}
 		engagement, _ := item["engagement"].(map[string]interface{})
-
 		likecount, _ := engagement["count"].(json.Number).Int64()
 		if likecount == 0 {
 			likecount = totallikes / itemlen
@@ -60,7 +69,7 @@ func main() {
 		}
 
 		// Append results
-		results = append(results, &EventData{id, name, link, likecount})
+		results = append(results, &EventData{id, name, link, likecount, website, address})
 	}
 
 	sort.Slice(results, func(i, j int) bool {

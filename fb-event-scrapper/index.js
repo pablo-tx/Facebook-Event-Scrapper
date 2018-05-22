@@ -6,6 +6,7 @@ async function run() {
         //headless:false
     });
     const page = await browser.newPage();
+    await page.setViewport({ width: 600, height: 3000 })
 
     const EVENT_NAME = "#upcoming_events_card > div:nth-child(1) > div:nth-child(INDEX) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2) > div:nth-child(1) > div:nth-child(1) > a:nth-child(1) > span:nth-child(1)";
     const EVENT_MONTH = "#upcoming_events_card > div:nth-child(1) > div:nth-child(INDEX) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > span:nth-child(1) > span:nth-child(1)";
@@ -14,7 +15,7 @@ async function run() {
     const EVENT_CONTAINER = "#upcoming_events_card > div:nth-child(1)"
 
     await page.goto(url+"events");
-    //await page.waitFor(2000);
+    await page.waitFor(1000);
 
     let eventList = await page.evaluate((sel) => {
         return document.querySelectorAll(sel).length != 0 ? document.querySelectorAll(sel)[0].childNodes.length : 0;

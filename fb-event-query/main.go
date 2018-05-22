@@ -1,8 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"os"
+	"os/exec"
 	"sort"
 	"strconv"
 
@@ -62,10 +67,19 @@ func main() {
 		return results[i].likecount > results[j].likecount
 	})
 
+	var out bytes.Buffer
+	multi := io.MultiWriter(os.Stdout, &out)
+
 	for _, result := range results {
-
 		fmt.Println(*result)
-
+		cmd := exec.Command("node", "../fb-event-scrapper/index.js", result.link)
+		cmd.Stdout = multi
+		if err := cmd.Run(); err != nil {
+			log.Fatalln(err)
+		}
+		cmd.Wait()
+		//fmt.Printf("%s\n", out.String())
+		out.Reset()
 	}
 
 }
